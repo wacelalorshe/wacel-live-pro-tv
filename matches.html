@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>وسيل لايف برو - بث المباريات</title>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<!-- خطوط -->
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+
+<!-- CSS Libraries -->
+<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="css/matches.css">
+</head>
+<body>
+
+<div class="background-animation">
+    <div class="bg-circle circle-1"></div>
+    <div class="bg-circle circle-2"></div>
+    <div class="bg-circle circle-3"></div>
+</div>
+
+<header class="main-header">
+    <div class="header-content">
+        <!-- الشعار -->
+        <div class="logo-section">
+            <img src="https://i.postimg.cc/Bb0WFJfJ/Picsart-25-01-18-03-49-12-620.png" alt="Logo" class="app-logo">
+        </div>
+        <!-- اسم التطبيق -->
+        <div class="app-name">
+            <span class="app-title">وسيل لايف برو</span>
+            <span class="app-subtitle">بث مباشر للمباريات</span>
+        </div>
+        <!-- التاريخ -->
+        <div class="date-section">
+            <div class="hijri-date" id="hijri-date">جدول مباريات اليوم</div>
+            <div class="gregorian-date" id="greg-date">--</div>
+        </div>
+    </div>
+</header>
+
+<div id="matches-container">
+    <div class="loading">جاري تحميل المباريات...</div>
+</div>
+
+<script src="js/matches.js"></script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+/* css/admin.css */
+/* الأنماط الأساسية */
+body {
+    background: linear-gradient(to right, #322769, #151825, #322769);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.admin-panel {
+    background: rgba(0, 0, 0, 0.9);
+    padding: 25px;
+    border-radius: 15px;
+    border: 2px solid #42318F;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.login-required {
+    text-align: center;
+    padding: 60px 30px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    margin: 50px 0;
+    border: 2px solid #42318F;
+}
+
+.firebase-status {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.firebase-success {
+    background: rgba(40, 167, 69, 0.2);
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.firebase-error {
+    background: rgba(220, 53, 69, 0.2);
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.firebase-warning {
+    background: rgba(255, 193, 7, 0.2);
+    border: 1px solid #ffc107;
+    color: #ffc107;
+}
+
+/* الأنماط المخصصة */
+.stats-card {
+    background: linear-gradient(135deg, #2F2562, #3A4266);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #42318F;
+    transition: all 0.3s ease;
+}
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #FF5200;
+    margin-bottom: 10px;
+}
+.stats-label {
+    color: #E1E1E1;
+    font-size: 14px;
+}
+.nav-tabs-custom {
+    border-bottom: 2px solid #42318F;
+}
+.nav-tabs-custom .nav-link {
+    color: #E1E1E1;
+    border: none;
+    border-radius: 8px 8px 0 0;
+    margin: 0 5px;
+    padding: 12px 25px;
+    transition: all 0.3s ease;
+}
+.nav-tabs-custom .nav-link.active {
+    background: linear-gradient(135deg, #322769, #654FD4);
+    color: white;
+    border: 1px solid #42318F;
+    border-bottom: none;
+}
+.nav-tabs-custom .nav-link:hover {
+    background: rgba(101, 79, 212, 0.2);
+    color: white;
+}
+.card-header-custom {
+    background: linear-gradient(135deg, #322769, #654FD4) !important;
+    border-bottom: 2px solid #42318F !important;
+    padding: 15px 20px;
+}
+
+.section-item, .channel-item {
+    background: linear-gradient(135deg, #2F2562, #3A4266);
+    border-radius: 10px;
+    border: 1px solid #42318F;
+    margin-bottom: 15px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.section-item:hover, .channel-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid #42318F;
+    color: white;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #654FD4;
+    color: white;
+    box-shadow: 0 0 0 0.2rem rgba(101, 79, 212, 0.25);
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.sync-actions {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #42318F;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.section-image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 2px solid #42318F;
+    margin-top: 10px;
+    display: none;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.edit-form {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 1px solid #42318F;
+}
+
+/* تحسينات للعرض على الجوال */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 10px;
+    }
+    
+    .admin-panel {
+        padding: 15px;
+    }
+    
+    .stats-card {
+        padding: 15px;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+    }
+    
+    .nav-tabs-custom .nav-link {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-number {
+        font-size: 1.5rem;
+    }
+    
+    .nav-tabs-custom .nav-link {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin: 0 2px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .sync-actions .row {
+        flex-direction: column;
+    }
+    
+    .sync-actions .col-md-4 {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

@@ -319,3 +319,40 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🏠 صفحة القسم جاهزة للتشغيل');
     window.sectionApp = new SectionApp();
 });
+
+
+
+// اختبار اتصال Firebase
+async function testFirebaseConnection() {
+    try {
+        if (typeof firebase === 'undefined') {
+            console.error('❌ Firebase SDK غير محمل');
+            return false;
+        }
+        
+        console.log('🔍 اختبار اتصال Firebase...');
+        
+        // تهيئة Firebase
+        const app = firebase.initializeApp({
+            apiKey: "AIzaSyAkgEiYYlmpMe0NLewulheovlTQMz5C980",
+            authDomain: "bein-42f9e.firebaseapp.com",
+            projectId: "bein-42f9e"
+        }, 'test-app');
+        
+        const db = firebase.firestore();
+        
+        // اختبار القراءة
+        const testDoc = await db.collection('test').doc('connection').get();
+        console.log('✅ اتصال Firebase ناجح');
+        
+        return true;
+    } catch (error) {
+        console.error('❌ فشل اختبار اتصال Firebase:', error);
+        return false;
+    }
+}
+
+// تشغيل الاختبار عند تحميل الصفحة
+window.addEventListener('load', () => {
+    testFirebaseConnection();
+});

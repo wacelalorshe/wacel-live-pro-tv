@@ -411,3 +411,80 @@ header {
 .error-message .btn {
     margin: 0 10px;
 }
+
+
+/* أضف هذه الأنماط في نهاية ملف section.css */
+
+.custom-alert {
+    position: fixed;
+    top: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    max-width: 500px;
+    width: 90%;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.error-message {
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    border: 2px solid #ff6b6b;
+    margin: 20px;
+}
+
+.error-message h4 {
+    color: #ff6b6b;
+    margin-bottom: 15px;
+}
+
+.error-message p {
+    color: #ffcccb;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.error-message .btn {
+    margin: 0 5px;
+    min-width: 120px;
+}
+
+/* أنماط إضافية للأزرار */
+.btn-primary {
+    background: linear-gradient(45deg, #3545FF, #FF5200);
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-secondary {
+    background: linear-gradient(45deg, #6c757d, #495057);
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-warning {
+    background: linear-gradient(45deg, #ffc107, #ff9800);
+    border: none;
+    color: #000;
+    font-weight: bold;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}

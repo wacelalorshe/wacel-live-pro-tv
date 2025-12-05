@@ -20,7 +20,7 @@ class SectionApp {
         console.log('📋 معرّف القسم:', this.sectionId);
         
         if (!this.sectionId) {
-            this.showError('لم يتم تحديد قسم. الرجاء العودة للصفحة الرئيسية واختيار قسم.');
+            this.showError('لم يتم تحديد قسم. الرجاء العودة للصفحة الرئيسية واختيار قسم.', 'no-section-id');
             return;
         }
         
@@ -32,6 +32,10 @@ class SectionApp {
     }
 
     async loadData() {
+        console.log('📥 جاري تحميل البيانات...');
+        let firebaseError = null;
+        let localStorageError = null;
+        
         try {
             // أولاً: محاولة التحميل من Firebase
             const firebaseLoaded = await this.tryLoadFromFirebase();
@@ -40,7 +44,12 @@ class SectionApp {
                 console.log('✅ تم تحميل البيانات من Firebase');
                 return;
             }
-            
+        } catch (error) {
+            firebaseError = error;
+            console.error('❌ فشل تحميل Firebase:', error);
+        }
+        
+        try {
             // ثانياً: محاولة التحميل من التخزين المحلي
             const localStorageLoaded = await this.tryLoadFromLocalStorage();
             
@@ -48,34 +57,42 @@ class SectionApp {
                 console.log('✅ تم تحميل البيانات من التخزين المحلي');
                 return;
             }
-            
-            // إذا فشل كل شيء
-            this.showError('فشل في تحميل البيانات. تأكد من اتصالك بالإنترنت.');
-            
         } catch (error) {
-            console.error('❌ خطأ غير متوقع:', error);
-            this.showError('حدث خطأ غير متوقع: ' + error.message);
+            localStorageError = error;
+            console.error('❌ فشل تحميل localStorage:', error);
         }
+        
+        // إذا فشل كل شيء
+        let errorMessage = 'فشل في تحميل البيانات. تأكد من اتصالك بالإنترنت.';
+        if (firebaseError) {
+            errorMessage += '<br>خطأ Firebase: ' + firebaseError.message;
+        }
+        if (localStorageError) {
+            errorMessage += '<br>خطأ localStorage: ' + localStorageError.message;
+        }
+        this.showError(errorMessage, 'load-failed');
     }
 
     async tryLoadFromFirebase() {
         try {
-            if (!firebaseUtils.isInitialized()) {
-                await firebaseUtils.initializeFirebase();
+            console.log('📡 جاري جلب البيانات من Firebase...');
+            
+            // تهيئة Firebase إذا لم تكن مهيأة
+            if (!window.firebaseUtils || !window.firebaseUtils.isInitialized()) {
+                console.log('🔧 جاري تهيئة Firebase...');
+                await window.firebaseUtils.initializeFirebase();
             }
             
-            const db = firebaseUtils.getDB();
+            const db = window.firebaseUtils.getDB();
             if (!db) {
                 throw new Error('Firestore غير متاح');
             }
-            
-            console.log('📡 جاري جلب البيانات من Firebase...');
             
             // 1. جلب بيانات القسم
             const sectionDoc = await db.collection('sections').doc(this.sectionId).get();
             
             if (!sectionDoc.exists) {
-                throw new Error('القسم غير موجود في قاعدة البيانات');
+                throw new Error('القسم غير موجود في قاعدة البيانات. تأكد من أن المعرف صحيح.');
             }
             
             this.section = {
@@ -108,7 +125,7 @@ class SectionApp {
             
         } catch (error) {
             console.warn('⚠️ فشل تحميل Firebase:', error.message);
-            return false;
+            throw error;
         }
     }
 
@@ -117,7 +134,7 @@ class SectionApp {
             console.log('💾 جاري تحميل البيانات من التخزين المحلي...');
             
             // 1. جلب الأقسام من localStorage
-            const savedSections = firebaseUtils.loadFromLocalStorage('bein_sections');
+            const savedSections = window.firebaseUtils ? window.firebaseUtils.loadFromLocalStorage('bein_sections') : null;
             if (!savedSections) {
                 throw new Error('لا توجد بيانات محلية للأقسام');
             }
@@ -132,7 +149,7 @@ class SectionApp {
             console.log('✅ تم العثور على القسم في البيانات المحلية:', this.section.name);
             
             // 3. جلب القنوات من localStorage
-            const savedChannels = firebaseUtils.loadFromLocalStorage('bein_channels');
+            const savedChannels = window.firebaseUtils ? window.firebaseUtils.loadFromLocalStorage('bein_channels') : null;
             if (savedChannels) {
                 this.channels = savedChannels.filter(channel => channel.sectionId === this.sectionId);
                 console.log(`✅ تم تحميل ${this.channels.length} قناة من البيانات المحلية`);
@@ -146,7 +163,7 @@ class SectionApp {
             
         } catch (error) {
             console.warn('⚠️ فشل تحميل البيانات المحلية:', error.message);
-            return false;
+            throw error;
         }
     }
 
@@ -253,7 +270,8 @@ class SectionApp {
         }
     }
 
-    showError(message) {
+    showError(message, errorType) {
+        console.error(`❌ خطأ (${errorType}):`, message);
         const container = document.getElementById('channelsContainer');
         if (container) {
             container.innerHTML = `
@@ -267,6 +285,9 @@ class SectionApp {
                         </a>
                         <button onclick="window.location.reload()" class="btn btn-secondary">
                             <i class="uil uil-redo"></i> إعادة تحميل
+                        </button>
+                        <button onclick="sectionApp.loadData()" class="btn btn-warning mt-2">
+                            <i class="uil uil-refresh"></i> إعادة تحميل البيانات
                         </button>
                     </div>
                 </div>

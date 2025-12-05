@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aseel TV - قنوات بي إن سبورت</title>
+    
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Amita">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Main Page (الأقسام) -->
+    <div id="mainPage">
+        <!-- Header -->
+        <header>
+            <div class="header-title">
+                <a href="#" class="text-box">
+                    <span>وسيل لايف برو TV</span>
+                </a>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <h1 class="page-title">أقسام القنوات المتاحة</h1>
+            <div class="welcome-message">
+                في تطبيق وسيل لايف برو
+            </div>
+            
+            <!-- Sections Grid -->
+            <div id="sectionsContainer" class="sections-container">
+                <div class="loading">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                    <p>جاري تحميل الأقسام من قاعدة البيانات...</p>
+                    <small>يرجى الانتظار</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Page (القنوات) -->
+    <div id="sectionPage">
+        <!-- Header -->
+        <header>
+            <div class="header-title">
+                <a href="#" class="text-box">
+                    <span id="sectionHeader">قنوات القسم</span>
+                </a>
+            </div>
+            
+            <!-- Back Button -->
+            <a href="#" class="back-button" onclick="showPage('mainPage')">
+                <i class="uil uil-arrow-left"></i> العودة للأقسام
+            </a>
+        </header>
+        
+        <!-- Ticker -->
+        <div class="ticker-container">
+            <div class="ticker">
+                <span>تنويه هام</span>
+                <ul>
+                    <li><a href="https://play.google.com/store/apps/details?id=com.xpola.player" target="_blank">قم بتحديث مشغل الفيديو الخاص بالتطبيق</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=com.xpola.player" target="_blank">من متجر جوجل بلاي لضمان</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=com.xpola.player" target="_blank">تشغيل القنوات وعدم التقطيع</a></li>
+                    <li><a href="https://play.google.com/store/apps/details?id=com.xpola.player" target="_blank">شكرا لكم متابعينا الكرام</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <h1 class="section-title" id="sectionName">قنوات القسم</h1>
+            <div class="section-description" id="sectionDescription">
+                جاري تحميل القنوات...
+            </div>
+            
+            <!-- Channels Grid -->
+            <div id="channelsContainer" class="channels-container">
+                <div class="loading">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                    <p>جاري تحميل القنوات...</p>
+                    <small>يرجى الانتظار</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p class="copyright">جميع الحقوق محفوظة &copy; <span id="currentYear"></span> Aseel TV</p>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="uil uil-home"></i>
+            <span>الرئيسية</span>
+        </a>
+        <a href="matches.html" class="nav-item">
+            <i class="uil uil-calendar-alt"></i>
+            <span>جدول المباريات</span>
+        </a>
+        <a href="https://t.me/wacelalorshepro" class="nav-item">
+            <i class="uil uil-telegram-alt"></i>
+            <span>تليجرام</span>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.xpola.player" class="nav-item">
+            <i class="uil uil-download-alt"></i>
+            <span>تحميل المشغل</span>
+        </a>
+    </div>
+    
+    <!-- Install Modal -->
+    <div id="installModal" class="modal">
+        <div class="modal-content">
+            <p>لمشاهدة القنوات يجب عليك أولاً تثبيت تطبيق مشغل القنوات الخاص بالتطبيق</p>
+            <div class="dont-show-container">
+                <input type="checkbox" id="dontShowAgain">
+                <label for="dontShowAgain" style="margin-right: 10px;">عدم الإظهار مرة أخرى</label>
+            </div>
+            <div class="modal-buttons">
+                <button id="confirmInstall" class="modal-button">تحميل مشغل القنوات</button>
+                <button id="cancelInstall" class="modal-button cancel-button">الغاء التحميل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

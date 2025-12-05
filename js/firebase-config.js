@@ -1,201 +1,188 @@
-// Firebase configuration with comprehensive error handling
+// Firebase configuration للصفحة الرئيسية
 const firebaseConfig = {
-  apiKey: "AIzaSyAkgEiYYlmpMe0NLewulheovlTQMz5C980",
-  authDomain: "bein-42f9e.firebaseapp.com",
-  projectId: "bein-42f9e",
-  storageBucket: "bein-42f9e.firebasestorage.app",
-  messagingSenderId: "143741167050",
-  appId: "1:143741167050:web:922d3a0cddb40f67b21b33",
-  measurementId: "G-JH198SKCFS"
+    apiKey: "AIzaSyAkgEiYYlmpMe0NLewulheovlTQMz5C980",
+    authDomain: "bein-42f9e.firebaseapp.com",
+    projectId: "bein-42f9e",
+    storageBucket: "bein-42f9e.firebasestorage.app",
+    messagingSenderId: "143741167050",
+    appId: "1:143741167050:web:922d3a0cddb40f67b21b33",
+    measurementId: "G-JH198SKCFS"
 };
 
-// Global variables for Firebase services
-let app = null;
+// Global Firebase variables
+let firebaseApp = null;
 let db = null;
-let auth = null;
 let firebaseInitialized = false;
 
-// Enhanced Firebase initialization
-function initializeFirebase() {
-    try {
-        console.group('🚀 Firebase Initialization');
-        
-        // Check if Firebase SDK is properly loaded
-        if (typeof firebase === 'undefined') {
-            console.error('❌ Firebase SDK is not loaded');
-            throw new Error('Firebase SDK لم يتم تحميله. تحقق من اتصال الإنترنت.');
-        }
-
-        console.log('✅ Firebase SDK is loaded');
-
-        // Initialize Firebase app
+// Initialize Firebase function
+async function initializeFirebase() {
+    return new Promise((resolve, reject) => {
         try {
+            console.log('🚀 جاري تهيئة Firebase...');
+            
+            // Check if Firebase is available
+            if (typeof firebase === 'undefined') {
+                throw new Error('Firebase SDK لم يتم تحميله');
+            }
+
+            // Check if Firebase is already initialized
             if (!firebase.apps.length) {
-                app = firebase.initializeApp(firebaseConfig);
-                console.log('✅ New Firebase app initialized');
+                firebaseApp = firebase.initializeApp(firebaseConfig);
+                console.log('✅ تم تهيئة Firebase بنجاح');
             } else {
-                app = firebase.app();
-                console.log('✅ Using existing Firebase app');
+                firebaseApp = firebase.apps[0];
+                console.log('✅ Firebase مهيأ مسبقاً');
             }
-        } catch (appError) {
-            console.error('❌ Firebase app initialization failed:', appError);
-            throw appError;
-        }
 
-        // Initialize Firestore with error handling
-        try {
-            if (typeof firebase.firestore === 'undefined') {
-                throw new Error('Firestore is not available');
-            }
-            
+            // Initialize Firestore
             db = firebase.firestore();
-            console.log('✅ Firestore service initialized');
+            console.log('✅ تم تهيئة Firestore بنجاح');
+
+            firebaseInitialized = true;
+            resolve({ app: firebaseApp, db: db });
             
-            // Configure Firestore settings
-            if (db) {
-                db.settings({
-                    timestampsInSnapshots: true,
-                    ignoreUndefinedProperties: true
-                });
-            }
-        } catch (firestoreError) {
-            console.error('❌ Firestore initialization failed:', firestoreError);
-            db = null;
+        } catch (error) {
+            console.error('❌ فشل تهيئة Firebase:', error);
+            reject(error);
         }
-
-        // Initialize Authentication
-        try {
-            if (typeof firebase.auth === 'undefined') {
-                throw new Error('Authentication is not available');
-            }
-            
-            auth = firebase.auth();
-            console.log('✅ Authentication service initialized');
-        } catch (authError) {
-            console.error('❌ Authentication initialization failed:', authError);
-            auth = null;
-        }
-
-        // Mark as initialized
-        firebaseInitialized = true;
-        console.log('🎉 Firebase initialized successfully');
-        console.groupEnd();
-
-        return { 
-            success: true, 
-            app: app, 
-            db: db, 
-            auth: auth 
-        };
-
-    } catch (error) {
-        console.error('💥 Firebase initialization failed:', error);
-        console.groupEnd();
-        
-        return { 
-            success: false, 
-            app: null, 
-            db: null, 
-            auth: null,
-            error: error.message 
-        };
-    }
-}
-
-// Safe database access function
-function getDatabase() {
-    if (!db) {
-        console.warn('⚠️ Database is not available. Initializing Firebase...');
-        const result = initializeFirebase();
-        return result.db;
-    }
-    return db;
+    });
 }
 
 // Test Firebase connection
 async function testFirebaseConnection() {
-    const database = getDatabase();
-    
-    if (!database) {
-        console.error('❌ Database is not available for connection test');
-        return { success: false, error: 'Database not available' };
-    }
-
     try {
-        console.log('🧪 Testing Firebase connection...');
+        if (!db) {
+            await initializeFirebase();
+        }
         
-        const testDoc = database.collection('connection_test').doc('test');
-        await testDoc.set({
+        const testDoc = db.collection('test_connection').doc('test');
+        await testDoc.set({ 
+            test: true, 
             timestamp: new Date(),
-            message: 'Testing Firebase connection',
-            status: 'success'
+            message: 'Testing Firestore connection'
         });
         
-        // Read it back to verify
-        const doc = await testDoc.get();
-        if (doc.exists) {
-            console.log('✅ Firebase connection test successful');
-            
-            // Clean up test document
-            await testDoc.delete();
-            
-            return { success: true };
-        } else {
-            console.error('❌ Test document was not created');
-            return { success: false, error: 'Test document not found' };
-        }
+        await testDoc.delete();
+        
+        console.log('✅ اختبار اتصال Firebase ناجح');
+        return true;
     } catch (error) {
-        console.error('❌ Firebase connection test failed:', error);
-        
-        let errorMessage = error.message;
-        if (error.code) {
-            errorMessage = `Error ${error.code}: ${error.message}`;
+        console.error('❌ فشل اختبار اتصال Firebase:', error);
+        return false;
+    }
+}
+
+// Load data from Firebase with error handling
+async function loadFirebaseData(collectionName) {
+    try {
+        if (!firebaseInitialized || !db) {
+            await initializeFirebase();
         }
         
-        return { 
-            success: false, 
-            error: errorMessage,
-            code: error.code 
-        };
+        const snapshot = await db.collection(collectionName).get();
+        
+        if (snapshot.empty) {
+            console.log(`ℹ️ لا توجد بيانات في ${collectionName}`);
+            return [];
+        }
+        
+        const data = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        
+        console.log(`✅ تم تحميل ${data.length} عنصر من ${collectionName}`);
+        return data;
+        
+    } catch (error) {
+        console.error(`❌ خطأ في تحميل ${collectionName}:`, error);
+        throw error;
     }
 }
 
-// Initialize Firebase immediately
-console.log('🔧 Starting Firebase initialization...');
-const initResult = initializeFirebase();
-
-// Make services globally available with safety checks
-window.firebaseApp = app;
-window.firebaseDb = db;
-window.firebaseAuth = auth;
-window.firebaseInitialized = firebaseInitialized;
-
-// Safe global access functions
-window.getFirebaseDb = getDatabase;
-window.testFirebase = testFirebaseConnection;
-
-// Auto-test connection
-setTimeout(() => {
-    if (db) {
-        testFirebaseConnection().then(result => {
-            if (result.success) {
-                console.log('🎉 Firebase is working perfectly!');
-            } else {
-                console.warn('⚠️ Firebase has issues:', result.error);
-            }
-        });
-    } else {
-        console.warn('⚠️ Firebase not initialized - using local storage only');
+// Save data to Firebase
+async function saveFirebaseData(collectionName, data) {
+    try {
+        if (!firebaseInitialized || !db) {
+            await initializeFirebase();
+        }
+        
+        const docRef = await db.collection(collectionName).add(data);
+        console.log(`✅ تم حفظ البيانات في ${collectionName} مع ID: ${docRef.id}`);
+        return docRef.id;
+        
+    } catch (error) {
+        console.error(`❌ خطأ في حفظ البيانات في ${collectionName}:`, error);
+        throw error;
     }
-}, 3000);
-
-// Export for modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { 
-        firebaseConfig, 
-        initializeFirebase, 
-        testFirebaseConnection,
-        getDatabase,
-        app, db, auth 
-    };
 }
+
+// Update data in Firebase
+async function updateFirebaseData(collectionName, docId, data) {
+    try {
+        if (!firebaseInitialized || !db) {
+            await initializeFirebase();
+        }
+        
+        await db.collection(collectionName).doc(docId).update(data);
+        console.log(`✅ تم تحديث الوثيقة ${docId} في ${collectionName}`);
+        
+    } catch (error) {
+        console.error(`❌ خطأ في تحديث البيانات في ${collectionName}:`, error);
+        throw error;
+    }
+}
+
+// Delete data from Firebase
+async function deleteFirebaseData(collectionName, docId) {
+    try {
+        if (!firebaseInitialized || !db) {
+            await initializeFirebase();
+        }
+        
+        await db.collection(collectionName).doc(docId).delete();
+        console.log(`✅ تم حذف الوثيقة ${docId} من ${collectionName}`);
+        
+    } catch (error) {
+        console.error(`❌ خطأ في حذف البيانات من ${collectionName}:`, error);
+        throw error;
+    }
+}
+
+// Save data to localStorage as backup
+function saveToLocalStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        console.log(`💾 تم حفظ البيانات في localStorage تحت مفتاح: ${key}`);
+    } catch (error) {
+        console.error('❌ خطأ في حفظ البيانات في localStorage:', error);
+    }
+}
+
+// Load data from localStorage
+function loadFromLocalStorage(key) {
+    try {
+        const data = localStorage.getItem(key);
+        if (data) {
+            return JSON.parse(data);
+        }
+        return null;
+    } catch (error) {
+        console.error('❌ خطأ في تحميل البيانات من localStorage:', error);
+        return null;
+    }
+}
+
+// Export Firebase utilities for use in other files
+window.firebaseUtils = {
+    initializeFirebase,
+    testFirebaseConnection,
+    loadFirebaseData,
+    saveFirebaseData,
+    updateFirebaseData,
+    deleteFirebaseData,
+    saveToLocalStorage,
+    loadFromLocalStorage,
+    getDB: () => db,
+    isInitialized: () => firebaseInitialized
+};

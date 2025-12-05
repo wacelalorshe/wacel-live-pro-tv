@@ -763,7 +763,7 @@ header {
 
 .custom-alert {
     position: fixed;
-    top: 10px;
+    top: 700px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 2000;

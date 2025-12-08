@@ -12,6 +12,323 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- أنماط الإشعارات الإضافية -->
+    <style>
+        /* أنماط الإشعارات */
+        .notification-dropdown {
+            position: absolute;
+            left: 90px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-block;
+            z-index: 1002;
+        }
+        
+        .notification-icon {
+            cursor: pointer;
+            padding: 8px;
+            right: -50px;
+            background: linear-gradient(45deg, #000, #202A9B);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border-bottom: 1px groove  #fff; 
+            border-top: 1px ridge  #fff; 
+            border-left: 1px ridge #fff;
+            border-right: 1px groove #fff;
+        }
+        
+        .notification-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        #unreadCount {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #44FF00;
+            color: #000000;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: bold;
+            min-width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1003;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* القائمة المنسدلة للإشعارات */
+        .notifications-list {
+            position: absolute;
+            right: 45;
+            top: 60px;
+            background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
+            border-bottom: 0px groove  #fff; 
+            border-top: 0px ridge  #fff; 
+            border-left: 4px ridge #000;
+            border-right: 4px groove #000;
+            border-radius: 10px;
+            z-index: 1000;
+            min-width: 520px;
+            max-width: 550px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            padding: 0;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: visibility 0s, opacity 0.3s linear, transform 0.3s ease;
+        }
+        
+        .notifications-list.show {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #notificationsList {
+            padding: 10px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        
+        .notification-item {
+            border-bottom: 1px solid #eee;
+            padding: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            text-align: right;
+            direction: rtl;
+        }
+        
+        .notification-item.unread {
+            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+            border-right: 4px solid #FFD800;
+        }
+        
+        .notification-item:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .notification-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .notification-time {
+            font-size: 11px;
+            color: #fff;
+            font-weight: normal;
+        }
+        
+        .notification-message {
+            font-size: 13px;
+            color: #fff;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .notification-actions {
+            margin-top: 8px;
+        }
+        
+        .notification-actions button {
+            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .notification-actions button:hover {
+            background-color: #2F2562;
+        }
+        
+        .notifications-empty {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+        }
+        
+        .notifications-empty i {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .notifications-footer {
+            text-align: center;
+            padding: 10px;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        
+        .notifications-footer button {
+            background: none;
+            border: none;
+            color: #3545FF;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        .notifications-footer button:hover {
+            text-decoration: underline;
+        }
+        
+        /* تنسيق النافذة المنبثقة للإشعارات */
+        .notification-popup {
+            position: fixed;
+            bottom: 80px;
+            right: 0px;
+            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+            border: 2px solid #3545FF;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 300px;
+            z-index: 2000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+            transform: translateX(120%);
+            opacity: 0;
+            direction: rtl;
+        }
+        
+        .notification-popup.show-popup {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .popup-close {
+            float: left;
+            font-size: 20px;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.3s;
+        }
+        
+        .popup-close:hover {
+            color: #FF0005;
+        }
+        
+        .popup-title {
+            color: #3545FF;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .popup-message {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .popup-actions button {
+            background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        /* مؤشر الإشعارات الجديدة */
+        .new-notification-indicator {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            background-color: #FF0005;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 999;
+            animation: pulse 2s infinite;
+            box-shadow: 0 3px 10px rgba(255, 0, 5, 0.3);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        /* أحجام الشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .notification-dropdown {
+                left: 70px;
+            }
+            
+            .notification-icon {
+                width: 36px;
+                height: 36px;
+                padding: 6px;
+                
+            }
+            
+            .notifications-list {
+                min-width: 280px;
+                max-width: 300px;
+                right: -10px;
+            }
+            
+            .notification-popup {
+                max-width: 250px;
+                right: 10px;
+                bottom: 70px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .notification-dropdown {
+                left: 60px;
+            }
+            
+            .notifications-list {
+                min-width: 250px;
+                max-width: 280px;
+                right: -250px;
+            }
+            
+            .notification-popup {
+                max-width: 220px;
+                right: 50px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -20,6 +337,33 @@
             <a href="index.html" class="text-box">
                 <span>وسيل لايف برو TV</span>
             </a>
+        </div>
+        
+        <!-- زر العودة -->
+        <a href="javascript:history.back()" class="back-button">
+            <i class="g"></i> 
+        </a>
+        
+        <!-- إشعارات -->
+        <div class="notification-dropdown">
+            <div class="notification-icon" onclick="window.firebaseNotifications.toggleDropdown()" title="الإشعارات">
+                <i class="uil uil-bell"></i>
+                <span id="unreadCount">0</span>
+            </div>
+            
+            <div id="notificationsDropdown" class="notifications-list">
+                <div id="notificationsList">
+                    <div style="text-align: center; padding: 20px;">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">جاري التحميل...</span>
+                        </div>
+                        <p>جاري تحميل الإشعارات...</p>
+                    </div>
+                </div>
+                <div class="notifications-footer">
+                    <button onclick="window.firebaseNotifications.markAllAsRead()">تحديد الكل كمقروء</button>
+                </div>
+            </div>
         </div>
     </header>
     
@@ -76,5 +420,8 @@
     
     <!-- Custom JS -->
     <script src="js/main.js"></script>
+    
+    <!-- نظام الإشعارات -->
+    <script src="js/firebase-notifications.js"></script>
 </body>
 </html>

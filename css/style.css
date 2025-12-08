@@ -77,7 +77,7 @@ header {
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    background: linear-gradient(45deg, #3545FF, #FF5200);
+    background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
     color: white;
     border: none;
     border-radius: 25px;
@@ -759,33 +759,3 @@ header {
 
 
 
-/* أضف هذه الأنماط في نهاية ملف style.css */
-
-.custom-alert {
-    position: fixed;
-    top: 550px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2000;
-    max-width: 500px;
-    width: 70%;
-    text-align: center;
-    animation: slideDown 0.1s ease;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateX(-50%) translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-}
-
-/* إخفاء رسائل الخطأ القديمة */
-.error-state {
-    display: none !important;
-}

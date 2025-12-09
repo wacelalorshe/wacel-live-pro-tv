@@ -1,1299 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة الإشعارات - Aseel TV</title>
-    
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/admin.css">
-    
-    <style>
-        /* أنماط إضافية لصفحة الإشعارات */
-        .notification-edit-form {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            border: 1px solid #42318F;
-            display: none;
-        }
-        
-        .notification-edit-form.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-        
-        .notification-actions {
-            display: flex;
-            gap: 5px;
-        }
-        
-        .notification-actions .btn-sm {
-            padding: 4px 8px;
-            font-size: 12px;
-        }
-        
-        .bulk-actions {
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #42318F;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .bulk-actions.show {
-            display: block;
-        }
-        
-        .selected-count {
-            background: #322769;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-right: 5px;
-        }
-        
-        .notification-checkbox {
-            margin-left: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="admin-container">
-        <!-- التحقق من صلاحيات الدخول -->
-        <div id="authCheck" class="auth-required" style="display: none;">
-            <div class="mb-4">
-                <i class="uil uil-lock-alt" style="font-size: 80px; color: #FF5200;"></i>
-            </div>
-            <h3 class="text-white mb-3">يجب تسجيل الدخول أولاً</h3>
-            <p class="text-white mb-4" style="font-size: 18px;">يجب أن تكون مشرفاً للوصول إلى هذه الصفحة</p>
-            <a href="index.html" class="btn btn-primary btn-lg">
-                <i class="uil uil-signin"></i> العودة للصفحة الرئيسية
-            </a>
-        </div>
-
-        <!-- لوحة إدارة الإشعارات -->
-        <div id="notificationsPanel" style="display: none;">
-            <div class="text-center mb-5">
-                <h1 style="color: #E1E1E1; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 2.5rem;">
-                    <i class="uil uil-bell"></i> إدارة الإشعارات
-                </h1>
-                <p class="text-muted">عرض وتعديل وحذف الإشعارات المرسلة</p>
-            </div>
-
-            <!-- إحصائيات الإشعارات -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number" id="totalNotifications">0</div>
-                        <div class="stats-label">إجمالي الإشعارات</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number" id="unreadNotifications">0</div>
-                        <div class="stats-label">غير مقروءة</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number" id="todayNotifications">0</div>
-                        <div class="stats-label">اليوم</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number" id="activeNotifications">0</div>
-                        <div class="stats-label">نشطة</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- إجراءات سريعة -->
-            <div class="sync-actions mb-4">
-                <h5 class="text-white mb-3"><i class="uil uil-cog"></i> إجراءات سريعة</h5>
-                <div class="row">
-                    <div class="col-md-2">
-                        <button class="btn btn-success w-100 mb-2" onclick="loadNotifications()">
-                            <i class="uil uil-refresh"></i> تحديث
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-info w-100 mb-2" onclick="toggleBulkActions()">
-                            <i class="uil uil-check-square"></i> تحديد متعدد
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-primary w-100 mb-2" onclick="markAllAsRead()">
-                            <i class="uil uil-check-circle"></i> تحديد كمقروء
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-warning w-100 mb-2" onclick="exportNotifications()">
-                            <i class="uil uil-import"></i> تصدير
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-danger w-100 mb-2" onclick="showDeleteAllModal()">
-                            <i class="uil uil-trash-alt"></i> حذف الجميع
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <a href="message-sender.html" class="btn btn-secondary w-100 mb-2">
-                            <i class="uil uil-megaphone"></i> إرسال جديد
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- إجراءات المجموعة -->
-            <div id="bulkActions" class="bulk-actions">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="selected-count" id="selectedCount">0</span>
-                        <span class="text-white">إشعار محدد</span>
-                    </div>
-                    <div class="notification-actions">
-                        <button class="btn btn-sm btn-info" onclick="markSelectedAsRead()">
-                            <i class="uil uil-check-circle"></i> تحديد كمقروء
-                        </button>
-                        <button class="btn btn-sm btn-warning" onclick="markSelectedAsUnread()">
-                            <i class="uil uil-eye-slash"></i> تحديد كغير مقروء
-                        </button>
-                        <button class="btn btn-sm btn-success" onclick="activateSelected()">
-                            <i class="uil uil-power"></i> تفعيل
-                        </button>
-                        <button class="btn btn-sm btn-secondary" onclick="deactivateSelected()">
-                            <i class="uil uil-power"></i> تعطيل
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteSelected()">
-                            <i class="uil uil-trash-alt"></i> حذف المحدد
-                        </button>
-                        <button class="btn btn-sm btn-outline-light" onclick="deselectAll()">
-                            <i class="uil uil-times"></i> إلغاء التحديد
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- فلترة الإشعارات -->
-            <div class="card mb-4" style="background: rgba(0,0,0,0.7); border: 1px solid #42318F;">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" id="searchNotifications" 
-                                   placeholder="🔍 بحث في الإشعارات..." oninput="filterNotifications()">
-                        </div>
-                        <div class="col-md-2">
-                            <select class="form-control" id="filterType" onchange="filterNotifications()">
-                                <option value="">جميع الأنواع</option>
-                                <option value="info">معلومات</option>
-                                <option value="warning">تحذير</option>
-                                <option value="important">هام</option>
-                                <option value="success">نجاح</option>
-                                <option value="welcome">ترحيب</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <select class="form-control" id="filterStatus" onchange="filterNotifications()">
-                                <option value="">جميع الحالات</option>
-                                <option value="unread">غير مقروء</option>
-                                <option value="read">مقروء</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <select class="form-control" id="filterActivity" onchange="filterNotifications()">
-                                <option value="">النشاط</option>
-                                <option value="active">نشط</option>
-                                <option value="inactive">غير نشط</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select class="form-control" id="filterDate" onchange="filterNotifications()">
-                                <option value="">جميع الأوقات</option>
-                                <option value="today">اليوم</option>
-                                <option value="week">هذا الأسبوع</option>
-                                <option value="month">هذا الشهر</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- قائمة الإشعارات -->
-            <div class="card" style="background: rgba(0,0,0,0.7); border: 1px solid #42318F;">
-                <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0 text-white">
-                        <i class="uil uil-list-ul"></i> قائمة الإشعارات
-                        <span class="badge bg-primary ms-2" id="notificationsCount">0</span>
-                    </h4>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="selectAllNotifications" onchange="toggleSelectAll(this.checked)">
-                        <label class="form-check-label text-white" for="selectAllNotifications">تحديد الكل</label>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="notificationsList">
-                        <div class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">جاري التحميل...</span>
-                            </div>
-                            <p class="mt-3 text-muted">جاري تحميل الإشعارات...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- نموذج تعديل الإشعار -->
-            <div class="card mt-4" style="background: rgba(0,0,0,0.7); border: 1px solid #42318F; display: none;" id="editFormCard">
-                <div class="card-header card-header-custom">
-                    <h4 class="mb-0 text-white">
-                        <i class="uil uil-edit"></i> تعديل الإشعار
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <form id="editNotificationForm" onsubmit="updateNotification(event)">
-                        <input type="hidden" id="editNotificationId">
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label class="form-label">عنوان الإشعار *</label>
-                                    <input type="text" id="editTitle" class="form-control" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">نوع الإشعار</label>
-                                    <select id="editType" class="form-control">
-                                        <option value="info">معلومات</option>
-                                        <option value="warning">تحذير</option>
-                                        <option value="important">هام</option>
-                                        <option value="success">نجاح</option>
-                                        <option value="welcome">ترحيب</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label class="form-label">الأولوية</label>
-                                    <select id="editPriority" class="form-control">
-                                        <option value="normal">عادية</option>
-                                        <option value="high">عالية</option>
-                                        <option value="urgent">عاجلة</option>
-                                    </select>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label class="form-label">الحالة</label>
-                                    <div class="d-flex gap-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="editIsActive">
-                                            <label class="form-check-label" for="editIsActive">
-                                                نشط
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="editIsRead">
-                                            <label class="form-check-label" for="editIsRead">
-                                                مقروء
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                            <label class="form-label">نص الرسالة *</label>
-                            <textarea id="editMessage" class="form-control" rows="4" required></textarea>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group mb-3">
-                                    <label class="form-label">رابط الإجراء (اختياري)</label>
-                                    <input type="url" id="editActionUrl" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label">نص الرابط</label>
-                                    <input type="text" id="editLinkText" class="form-control" value="عرض التفاصيل">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-success flex-fill">
-                                <i class="uil uil-save"></i> حفظ التغييرات
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
-                                <i class="uil uil-times"></i> إلغاء
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- أزرار التنقل -->
-            <div class="mt-5 text-center">
-                <a href="message-sender.html" class="btn btn-success me-3">
-                    <i class="uil uil-megaphone"></i> إرسال إشعار جديد
-                </a>
-                <a href="admin.html" class="btn btn-primary me-3">
-                    <i class="uil uil-arrow-left"></i> العودة للإدارة
-                </a>
-                <a href="index.html" class="btn btn-secondary">
-                    <i class="uil uil-home"></i> الرئيسية
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal حذف جميع الإشعارات -->
-    <div class="modal fade" id="deleteAllModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content" style="background: rgba(0,0,0,0.9); border: 2px solid #42318F;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-white">
-                        <i class="uil uil-trash-alt text-danger me-2"></i>
-                        حذف جميع الإشعارات
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <i class="uil uil-exclamation-triangle" style="font-size: 60px; color: #ffc107;"></i>
-                    </div>
-                    <h5 class="text-center text-warning mb-3">⚠️ تحذير مهم!</h5>
-                    <p class="text-white text-center">
-                        هل أنت متأكد من حذف <strong>جميع الإشعارات</strong>؟
-                    </p>
-                    <p class="text-muted text-center">
-                        هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع الإشعارات نهائياً.
-                    </p>
-                    <div class="alert alert-danger mt-3">
-                        <i class="uil uil-info-circle"></i>
-                        سيتم حذف <strong><span id="deleteAllCount">0</span></strong> إشعار
-                    </div>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="uil uil-times"></i> إلغاء
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="deleteAllNotifications()">
-                        <i class="uil uil-trash-alt"></i> نعم، احذف الكل
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal حذف إشعار محدد -->
-    <div class="modal fade" id="deleteSelectedModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content" style="background: rgba(0,0,0,0.9); border: 2px solid #42318F;">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-white">
-                        <i class="uil uil-trash-alt text-danger me-2"></i>
-                        حذف الإشعارات المحددة
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <i class="uil uil-trash-alt" style="font-size: 60px; color: #dc3545;"></i>
-                    </div>
-                    <p class="text-white text-center">
-                        هل أنت متأكد من حذف <strong><span id="deleteSelectedCount">0</span></strong> إشعار؟
-                    </p>
-                    <p class="text-muted text-center">
-                        سيتم حذف الإشعارات المحددة نهائياً ولا يمكن استعادتها.
-                    </p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="uil uil-times"></i> إلغاء
-                    </button>
-                    <button type="button" class="btn btn-danger" onclick="confirmDeleteSelected()">
-                        <i class="uil uil-trash-alt"></i> نعم، احذف المحدد
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        let allNotifications = [];
-        let filteredNotifications = [];
-        let selectedNotifications = new Set();
-        let db = null;
-        let editMode = false;
-
-        // التحقق من صلاحيات المشرف
-        function checkAdminAuth() {
-            const authCheck = document.getElementById('authCheck');
-            const notificationsPanel = document.getElementById('notificationsPanel');
-            
-            const isAuthenticated = localStorage.getItem('adminAuth') === 'true';
-            
-            if (isAuthenticated) {
-                authCheck.style.display = 'none';
-                notificationsPanel.style.display = 'block';
-                initializeFirebase();
-            } else {
-                authCheck.style.display = 'block';
-                notificationsPanel.style.display = 'none';
-            }
-        }
-
-        // تهيئة Firebase
-        async function initializeFirebase() {
-            try {
-                if (typeof firebase === 'undefined') {
-                    throw new Error('Firebase غير متاح');
-                }
-
-                // تكوين Firebase
-                const firebaseConfig = {
-                    apiKey: "AIzaSyAkgEiYYlmpMe0NLewulheovlTQMz5C980",
-                    authDomain: "bein-42f9e.firebaseapp.com",
-                    projectId: "bein-42f9e",
-                    storageBucket: "bein-42f9e.firebasestorage.app",
-                    messagingSenderId: "143741167050",
-                    appId: "1:143741167050:web:922d3a0cddb40f67b21b33",
-                    measurementId: "G-JH198SKCFS"
-                };
-
-                // تهيئة Firebase
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                
-                db = firebase.firestore();
-                
-                // تحميل الإشعارات
-                await loadNotifications();
-                
-            } catch (error) {
-                console.error('❌ فشل تهيئة Firebase:', error);
-                showError('فشل الاتصال بقاعدة البيانات');
-            }
-        }
-
-        // تحميل الإشعارات
-        async function loadNotifications() {
-            try {
-                showLoading(true);
-                
-                if (!db) {
-                    throw new Error('قاعدة البيانات غير متاحة');
-                }
-
-                const snapshot = await db.collection('notifications')
-                    .orderBy('createdAt', 'desc')
-                    .get();
-
-                allNotifications = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    allNotifications.push({
-                        id: doc.id,
-                        title: data.title || 'بدون عنوان',
-                        message: data.message || '',
-                        type: data.type || 'info',
-                        createdAt: data.createdAt || new Date(),
-                        isRead: data.isRead || false,
-                        isActive: data.isActive !== false,
-                        actionUrl: data.actionUrl,
-                        linkText: data.linkText || 'عرض التفاصيل',
-                        sender: data.sender || 'admin',
-                        priority: data.priority || 'normal'
-                    });
-                });
-
-                filteredNotifications = [...allNotifications];
-                renderNotifications();
-                updateStatistics();
-                
-                showLoading(false);
-                showSuccess('تم تحميل الإشعارات بنجاح');
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحميل الإشعارات:', error);
-                showError('فشل تحميل الإشعارات: ' + error.message);
-                showLoading(false);
-            }
-        }
-
-        // عرض حالة التحميل
-        function showLoading(show) {
-            const container = document.getElementById('notificationsList');
-            if (!container) return;
-            
-            if (show) {
-                container.innerHTML = `
-                    <div class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">جاري التحميل...</span>
-                        </div>
-                        <p class="mt-3 text-muted">جاري تحميل الإشعارات...</p>
-                    </div>
-                `;
-            }
-        }
-
-        // عرض الإشعارات
-        function renderNotifications() {
-            const container = document.getElementById('notificationsList');
-            const countElement = document.getElementById('notificationsCount');
-            
-            if (!container) return;
-            
-            if (filteredNotifications.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-5">
-                        <i class="uil uil-bell-slash" style="font-size: 60px; color: #666;"></i>
-                        <h5 class="mt-3 text-muted">لا توجد إشعارات</h5>
-                        <button class="btn btn-primary mt-3" onclick="loadNotifications()">
-                            <i class="uil uil-refresh"></i> إعادة التحميل
-                        </button>
-                    </div>
-                `;
-                if (countElement) countElement.textContent = '0';
-                return;
-            }
-            
-            const icons = {
-                info: 'uil uil-info-circle text-info',
-                warning: 'uil uil-exclamation-triangle text-warning',
-                important: 'uil uil-bell text-danger',
-                success: 'uil uil-check-circle text-success',
-                welcome: 'uil uil-smile text-primary'
-            };
-            
-            container.innerHTML = filteredNotifications.map(notification => {
-                const date = notification.createdAt.toDate ? 
-                    notification.createdAt.toDate() : new Date(notification.createdAt);
-                const timeString = date.toLocaleTimeString('ar-SA');
-                const dateString = date.toLocaleDateString('ar-SA');
-                const isSelected = selectedNotifications.has(notification.id);
-                
-                return `
-                    <div class="notification-item ${notification.isRead ? 'read' : 'unread'} mb-3" id="notification-${notification.id}">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="d-flex align-items-start" style="flex: 1;">
-                                <div class="notification-checkbox">
-                                    <input type="checkbox" class="form-check-input" 
-                                           ${isSelected ? 'checked' : ''}
-                                           onchange="toggleNotificationSelection('${notification.id}', this.checked)">
-                                </div>
-                                <div class="notification-icon me-3">
-                                    <i class="${icons[notification.type] || 'uil uil-bell'}"></i>
-                                </div>
-                                <div style="flex: 1;">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h6 class="text-white mb-0">${notification.title}</h6>
-                                        <div>
-                                            <span class="badge ${notification.isActive ? 'bg-success' : 'bg-secondary'} me-2">
-                                                ${notification.isActive ? 'نشط' : 'غير نشط'}
-                                            </span>
-                                            <span class="badge bg-info">
-                                                ${notification.priority === 'urgent' ? 'عاجل' : 
-                                                  notification.priority === 'high' ? 'مرتفع' : 'عادي'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <p class="text-muted mb-2">${notification.message}</p>
-                                    <div class="text-muted small">
-                                        <i class="uil uil-user"></i> ${notification.sender}
-                                        <span class="mx-2">•</span>
-                                        <i class="uil uil-calendar-alt"></i> ${dateString}
-                                        <span class="mx-2">•</span>
-                                        <i class="uil uil-clock"></i> ${timeString}
-                                        ${notification.actionUrl ? `
-                                            <span class="mx-2">•</span>
-                                            <a href="${notification.actionUrl}" target="_blank" class="text-info">
-                                                <i class="uil uil-external-link-alt"></i> ${notification.linkText}
-                                            </a>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="notification-actions">
-                                <button class="btn btn-warning btn-sm" onclick="editNotification('${notification.id}')" title="تعديل">
-                                    <i class="uil uil-edit"></i>
-                                </button>
-                                <button class="btn btn-danger btn-sm ms-1" onclick="showDeleteModal('${notification.id}')" title="حذف">
-                                    <i class="uil uil-trash-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <!-- نموذج التعديل المضمن -->
-                        <div class="notification-edit-form" id="edit-form-${notification.id}"></div>
-                    </div>
-                `;
-            }).join('');
-            
-            if (countElement) countElement.textContent = filteredNotifications.length;
-            
-            // تحديث عدد الإشعارات المحددة
-            updateSelectedCount();
-        }
-
-        // تحديث الإحصائيات
-        function updateStatistics() {
-            const total = allNotifications.length;
-            const unread = allNotifications.filter(n => !n.isRead).length;
-            const today = allNotifications.filter(n => {
-                const date = n.createdAt.toDate ? n.createdAt.toDate() : new Date(n.createdAt);
-                const today = new Date();
-                return date.toDateString() === today.toDateString();
-            }).length;
-            const active = allNotifications.filter(n => n.isActive).length;
-            
-            document.getElementById('totalNotifications').textContent = total;
-            document.getElementById('unreadNotifications').textContent = unread;
-            document.getElementById('todayNotifications').textContent = today;
-            document.getElementById('activeNotifications').textContent = active;
-            
-            // تحديث عدد الإشعارات لحذف الكل
-            document.getElementById('deleteAllCount').textContent = total;
-        }
-
-        // فلترة الإشعارات
-        function filterNotifications() {
-            const searchTerm = document.getElementById('searchNotifications').value.toLowerCase();
-            const typeFilter = document.getElementById('filterType').value;
-            const statusFilter = document.getElementById('filterStatus').value;
-            const activityFilter = document.getElementById('filterActivity').value;
-            const dateFilter = document.getElementById('filterDate').value;
-            
-            filteredNotifications = allNotifications.filter(notification => {
-                // البحث النصي
-                if (searchTerm && !notification.title.toLowerCase().includes(searchTerm) && 
-                    !notification.message.toLowerCase().includes(searchTerm) &&
-                    !notification.sender.toLowerCase().includes(searchTerm)) {
-                    return false;
-                }
-                
-                // فلترة النوع
-                if (typeFilter && notification.type !== typeFilter) {
-                    return false;
-                }
-                
-                // فلترة حالة القراءة
-                if (statusFilter === 'unread' && notification.isRead) {
-                    return false;
-                }
-                if (statusFilter === 'read' && !notification.isRead) {
-                    return false;
-                }
-                
-                // فلترة النشاط
-                if (activityFilter === 'active' && !notification.isActive) {
-                    return false;
-                }
-                if (activityFilter === 'inactive' && notification.isActive) {
-                    return false;
-                }
-                
-                // فلترة التاريخ
-                if (dateFilter) {
-                    const date = notification.createdAt.toDate ? 
-                        notification.createdAt.toDate() : new Date(notification.createdAt);
-                    const today = new Date();
-                    
-                    if (dateFilter === 'today') {
-                        if (date.toDateString() !== today.toDateString()) return false;
-                    } else if (dateFilter === 'week') {
-                        const weekAgo = new Date();
-                        weekAgo.setDate(today.getDate() - 7);
-                        if (date < weekAgo) return false;
-                    } else if (dateFilter === 'month') {
-                        const monthAgo = new Date();
-                        monthAgo.setMonth(today.getMonth() - 1);
-                        if (date < monthAgo) return false;
-                    }
-                }
-                
-                return true;
-            });
-            
-            renderNotifications();
-        }
-
-        // التبديل بين تحديد/إلغاء تحديد الإشعار
-        function toggleNotificationSelection(notificationId, isSelected) {
-            if (isSelected) {
-                selectedNotifications.add(notificationId);
-            } else {
-                selectedNotifications.delete(notificationId);
-            }
-            
-            updateSelectedCount();
-            
-            // تحديث حالة تحديد الكل
-            const selectAllCheckbox = document.getElementById('selectAllNotifications');
-            if (selectAllCheckbox) {
-                selectAllCheckbox.checked = selectedNotifications.size === filteredNotifications.length;
-            }
-        }
-
-        // تحديد/إلغاء تحديد الكل
-        function toggleSelectAll(isSelected) {
-            if (isSelected) {
-                filteredNotifications.forEach(notification => {
-                    selectedNotifications.add(notification.id);
-                });
-            } else {
-                filteredNotifications.forEach(notification => {
-                    selectedNotifications.delete(notification.id);
-                });
-            }
-            
-            renderNotifications();
-        }
-
-        // إلغاء تحديد الكل
-        function deselectAll() {
-            selectedNotifications.clear();
-            renderNotifications();
-        }
-
-        // تحديث عدد الإشعارات المحددة
-        function updateSelectedCount() {
-            const selectedCount = selectedNotifications.size;
-            document.getElementById('selectedCount').textContent = selectedCount;
-            
-            // إظهار/إخفاء قسم الإجراءات المجمعة
-            const bulkActions = document.getElementById('bulkActions');
-            if (bulkActions) {
-                if (selectedCount > 0) {
-                    bulkActions.classList.add('show');
-                } else {
-                    bulkActions.classList.remove('show');
-                }
-            }
-            
-            // تحديث عدد الإشعارات المحددة في المودال
-            document.getElementById('deleteSelectedCount').textContent = selectedCount;
-        }
-
-        // إظهار/إخفاء إجراءات المجموعة
-        function toggleBulkActions() {
-            const bulkActions = document.getElementById('bulkActions');
-            if (bulkActions) {
-                if (bulkActions.classList.contains('show')) {
-                    selectedNotifications.clear();
-                    renderNotifications();
-                } else {
-                    // تحديد جميع الإشعارات المرئية
-                    filteredNotifications.forEach(notification => {
-                        selectedNotifications.add(notification.id);
-                    });
-                    renderNotifications();
-                }
-            }
-        }
-
-        // تعديل الإشعار
-        function editNotification(notificationId) {
-            // إخفاء أي نموذج تعديل مفتوح
-            document.querySelectorAll('.notification-edit-form').forEach(form => {
-                form.classList.remove('show');
-            });
-            
-            // إظهار نموذج التعديل الرئيسي
-            const notification = allNotifications.find(n => n.id === notificationId);
-            if (!notification) return;
-            
-            document.getElementById('editNotificationId').value = notification.id;
-            document.getElementById('editTitle').value = notification.title;
-            document.getElementById('editMessage').value = notification.message;
-            document.getElementById('editType').value = notification.type;
-            document.getElementById('editPriority').value = notification.priority;
-            document.getElementById('editIsActive').checked = notification.isActive;
-            document.getElementById('editIsRead').checked = notification.isRead;
-            document.getElementById('editActionUrl').value = notification.actionUrl || '';
-            document.getElementById('editLinkText').value = notification.linkText || 'عرض التفاصيل';
-            
-            // إظهار نموذج التعديل
-            const editFormCard = document.getElementById('editFormCard');
-            editFormCard.style.display = 'block';
-            editFormCard.scrollIntoView({ behavior: 'smooth' });
-            
-            editMode = true;
-        }
-
-        // تحديث الإشعار
-        async function updateNotification(event) {
-            event.preventDefault();
-            
-            const notificationId = document.getElementById('editNotificationId').value;
-            const notificationData = {
-                title: document.getElementById('editTitle').value.trim(),
-                message: document.getElementById('editMessage').value.trim(),
-                type: document.getElementById('editType').value,
-                priority: document.getElementById('editPriority').value,
-                isActive: document.getElementById('editIsActive').checked,
-                isRead: document.getElementById('editIsRead').checked,
-                actionUrl: document.getElementById('editActionUrl').value.trim() || null,
-                linkText: document.getElementById('editLinkText').value.trim() || 'عرض التفاصيل',
-                updatedAt: new Date()
-            };
-            
-            if (!notificationData.title || !notificationData.message) {
-                showError('يرجى ملء جميع الحقول المطلوبة');
-                return;
-            }
-            
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                await db.collection('notifications').doc(notificationId).update(notificationData);
-                
-                // تحديث محلياً
-                const notificationIndex = allNotifications.findIndex(n => n.id === notificationId);
-                if (notificationIndex !== -1) {
-                    allNotifications[notificationIndex] = {
-                        ...allNotifications[notificationIndex],
-                        ...notificationData
-                    };
-                }
-                
-                // تحديث الواجهة
-                renderNotifications();
-                updateStatistics();
-                
-                // إخفاء نموذج التعديل
-                cancelEdit();
-                
-                showSuccess('تم تحديث الإشعار بنجاح');
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحديث الإشعار:', error);
-                showError('فشل تحديث الإشعار: ' + error.message);
-            }
-        }
-
-        // إلغاء التعديل
-        function cancelEdit() {
-            document.getElementById('editNotificationForm').reset();
-            document.getElementById('editFormCard').style.display = 'none';
-            editMode = false;
-        }
-
-        // عرض مودال حذف إشعار واحد
-        function showDeleteModal(notificationId) {
-            const notification = allNotifications.find(n => n.id === notificationId);
-            if (!notification) return;
-            
-            if (confirm(`هل أنت متأكد من حذف الإشعار "${notification.title}"؟`)) {
-                deleteSingleNotification(notificationId);
-            }
-        }
-
-        // حذف إشعار واحد
-        async function deleteSingleNotification(notificationId) {
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                await db.collection('notifications').doc(notificationId).delete();
-                
-                // تحديث محلياً
-                allNotifications = allNotifications.filter(n => n.id !== notificationId);
-                filteredNotifications = filteredNotifications.filter(n => n.id !== notificationId);
-                selectedNotifications.delete(notificationId);
-                
-                // تحديث الواجهة
-                renderNotifications();
-                updateStatistics();
-                
-                showSuccess('تم حذف الإشعار بنجاح');
-                
-            } catch (error) {
-                console.error('❌ خطأ في حذف الإشعار:', error);
-                showError('فشل حذف الإشعار: ' + error.message);
-            }
-        }
-
-        // حذف الإشعارات المحددة
-        async function deleteSelected() {
-            if (selectedNotifications.size === 0) {
-                showInfo('لم يتم تحديد أي إشعارات للحذف');
-                return;
-            }
-            
-            // عرض مودال التأكيد باستخدام Bootstrap
-            const deleteSelectedModal = new bootstrap.Modal(document.getElementById('deleteSelectedModal'));
-            deleteSelectedModal.show();
-        }
-
-        // تأكيد حذف الإشعارات المحددة
-        async function confirmDeleteSelected() {
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                // إغلاق المودال
-                const deleteSelectedModal = bootstrap.Modal.getInstance(document.getElementById('deleteSelectedModal'));
-                deleteSelectedModal.hide();
-                
-                showLoading(true);
-                
-                // حذف من Firebase
-                const batch = db.batch();
-                selectedNotifications.forEach(notificationId => {
-                    const ref = db.collection('notifications').doc(notificationId);
-                    batch.delete(ref);
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                allNotifications = allNotifications.filter(n => !selectedNotifications.has(n.id));
-                filteredNotifications = filteredNotifications.filter(n => !selectedNotifications.has(n.id));
-                selectedNotifications.clear();
-                
-                // تحديث الواجهة
-                renderNotifications();
-                updateStatistics();
-                
-                showLoading(false);
-                showSuccess(`تم حذف ${selectedNotifications.size} إشعار بنجاح`);
-                
-            } catch (error) {
-                console.error('❌ خطأ في حذف الإشعارات المحددة:', error);
-                showError('فشل حذف الإشعارات: ' + error.message);
-                showLoading(false);
-            }
-        }
-
-        // عرض مودال حذف جميع الإشعارات
-        function showDeleteAllModal() {
-            if (allNotifications.length === 0) {
-                showInfo('لا توجد إشعارات للحذف');
-                return;
-            }
-            
-            const deleteAllModal = new bootstrap.Modal(document.getElementById('deleteAllModal'));
-            deleteAllModal.show();
-        }
-
-        // حذف جميع الإشعارات
-        async function deleteAllNotifications() {
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                // إغلاق المودال
-                const deleteAllModal = bootstrap.Modal.getInstance(document.getElementById('deleteAllModal'));
-                deleteAllModal.hide();
-                
-                showLoading(true);
-                
-                // حذف من Firebase
-                const snapshot = await db.collection('notifications').get();
-                const batch = db.batch();
-                
-                snapshot.forEach(doc => {
-                    batch.delete(doc.ref);
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                allNotifications = [];
-                filteredNotifications = [];
-                selectedNotifications.clear();
-                
-                // تحديث الواجهة
-                renderNotifications();
-                updateStatistics();
-                
-                showLoading(false);
-                showSuccess('تم حذف جميع الإشعارات بنجاح');
-                
-            } catch (error) {
-                console.error('❌ خطأ في حذف جميع الإشعارات:', error);
-                showError('فشل حذف الإشعارات: ' + error.message);
-                showLoading(false);
-            }
-        }
-
-        // تحديد الإشعارات المحددة كمقروءة
-        async function markSelectedAsRead() {
-            if (selectedNotifications.size === 0) {
-                showInfo('لم يتم تحديد أي إشعارات');
-                return;
-            }
-            
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                const batch = db.batch();
-                selectedNotifications.forEach(notificationId => {
-                    const ref = db.collection('notifications').doc(notificationId);
-                    batch.update(ref, {
-                        isRead: true,
-                        readAt: new Date()
-                    });
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                allNotifications.forEach(notification => {
-                    if (selectedNotifications.has(notification.id)) {
-                        notification.isRead = true;
-                    }
-                });
-                
-                renderNotifications();
-                updateStatistics();
-                
-                showSuccess(`تم تحديد ${selectedNotifications.size} إشعار كمقروء`);
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحديث الإشعارات:', error);
-                showError('فشل تحديث الإشعارات');
-            }
-        }
-
-        // تحديد الإشعارات المحددة كغير مقروءة
-        async function markSelectedAsUnread() {
-            if (selectedNotifications.size === 0) {
-                showInfo('لم يتم تحديد أي إشعارات');
-                return;
-            }
-            
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                const batch = db.batch();
-                selectedNotifications.forEach(notificationId => {
-                    const ref = db.collection('notifications').doc(notificationId);
-                    batch.update(ref, {
-                        isRead: false,
-                        readAt: null
-                    });
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                allNotifications.forEach(notification => {
-                    if (selectedNotifications.has(notification.id)) {
-                        notification.isRead = false;
-                    }
-                });
-                
-                renderNotifications();
-                updateStatistics();
-                
-                showSuccess(`تم تحديد ${selectedNotifications.size} إشعار كغير مقروء`);
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحديث الإشعارات:', error);
-                showError('فشل تحديث الإشعارات');
-            }
-        }
-
-        // تفعيل الإشعارات المحددة
-        async function activateSelected() {
-            if (selectedNotifications.size === 0) {
-                showInfo('لم يتم تحديد أي إشعارات');
-                return;
-            }
-            
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                const batch = db.batch();
-                selectedNotifications.forEach(notificationId => {
-                    const ref = db.collection('notifications').doc(notificationId);
-                    batch.update(ref, {
-                        isActive: true
-                    });
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                allNotifications.forEach(notification => {
-                    if (selectedNotifications.has(notification.id)) {
-                        notification.isActive = true;
-                    }
-                });
-                
-                renderNotifications();
-                updateStatistics();
-                
-                showSuccess(`تم تفعيل ${selectedNotifications.size} إشعار`);
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحديث الإشعارات:', error);
-                showError('فشل تحديث الإشعارات');
-            }
-        }
-
-        // تعطيل الإشعارات المحددة
-        async function deactivateSelected() {
-            if (selectedNotifications.size === 0) {
-                showInfo('لم يتم تحديد أي إشعارات');
-                return;
-            }
-            
-            try {
-                if (!db) throw new Error('قاعدة البيانات غير متاحة');
-                
-                const batch = db.batch();
-                selectedNotifications.forEach(notificationId => {
-                    const ref = db.collection('notifications').doc(notificationId);
-                    batch.update(ref, {
-                        isActive: false
-                    });
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                allNotifications.forEach(notification => {
-                    if (selectedNotifications.has(notification.id)) {
-                        notification.isActive = false;
-                    }
-                });
-                
-                renderNotifications();
-                updateStatistics();
-                
-                showSuccess(`تم تعطيل ${selectedNotifications.size} إشعار`);
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحديث الإشعارات:', error);
-                showError('فشل تحديث الإشعارات');
-            }
-        }
-
-        // تحديد جميع الإشعارات كمقروءة
-        async function markAllAsRead() {
-            try {
-                if (!db) return;
-                
-                const unreadNotifications = allNotifications.filter(n => !n.isRead);
-                
-                if (unreadNotifications.length === 0) {
-                    showInfo('لا توجد إشعارات غير مقروءة');
-                    return;
-                }
-                
-                if (!confirm(`هل تريد تحديد ${unreadNotifications.length} إشعار كمقروء؟`)) return;
-                
-                showLoading(true);
-                
-                const batch = db.batch();
-                unreadNotifications.forEach(notification => {
-                    const ref = db.collection('notifications').doc(notification.id);
-                    batch.update(ref, {
-                        isRead: true,
-                        readAt: new Date()
-                    });
-                });
-                
-                await batch.commit();
-                
-                // تحديث محلياً
-                unreadNotifications.forEach(n => n.isRead = true);
-                
-                renderNotifications();
-                updateStatistics();
-                
-                showLoading(false);
-                showSuccess('تم تحديد جميع الإشعارات كمقروءة بنجاح');
-                
-            } catch (error) {
-                console.error('❌ خطأ في تحديث الإشعارات:', error);
-                showError('فشل تحديث الإشعارات');
-                showLoading(false);
-            }
-        }
-
-        // تصدير الإشعارات
-        async function exportNotifications() {
-            try {
-                const data = {
-                    notifications: allNotifications,
-                    exportedAt: new Date(),
-                    total: allNotifications.length,
-                    version: '1.0'
-                };
-
-                const dataStr = JSON.stringify(data, null, 2);
-                const dataBlob = new Blob([dataStr], {type: 'application/json'});
-                
-                const url = URL.createObjectURL(dataBlob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `notifications-backup-${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showSuccess('تم تصدير الإشعارات بنجاح');
-                
-            } catch (error) {
-                console.error('❌ فشل تصدير الإشعارات:', error);
-                showError('فشل تصدير الإشعارات');
-            }
-        }
-
-        // عرض رسائل الحالة
-        function showMessage(message, type) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            const container = document.querySelector('.admin-container');
-            if (container) {
-                container.insertBefore(alertDiv, container.firstChild);
-            }
-            
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
-        }
-
-        function showSuccess(message) {
-            showMessage(`✅ ${message}`, 'success');
-        }
-
-        function showError(message) {
-            showMessage(`❌ ${message}`, 'danger');
-        }
-
-        function showInfo(message) {
-            showMessage(`ℹ️ ${message}`, 'info');
-        }
-
-        // تهيئة الصفحة عند التحميل
-        document.addEventListener('DOMContentLoaded', checkAdminAuth);
-    </script>
-</body>
-</html>

@@ -1,4 +1,4 @@
-/* css/style.css */
+/* css/style.css - التنسيقات العامة والأساسية */
 :root {
     --primary-color: #3545FF;
     --secondary-color: #FF5200;
@@ -9,6 +9,11 @@
     --success-color: #80FF00;
     --danger-color: #FF0005;
     --accent-glow: rgba(93, 114, 214, 0.4);
+    
+    /* ألوان المباريات المستخدمة في matches.css */
+    --accent-color-match: #5d72d6; 
+    --text-secondary: #a8b1e1;
+    --card-bg-match: linear-gradient(145deg, rgba(21, 24, 37, 0.9), rgba(30, 33, 58, 0.9));
 }
 
 * {
@@ -30,42 +35,42 @@ body, html {
 
 /* Header Styles */
 header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
-            border-bottom: 6px groove #3A4266;
-            height: 79px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0px 0px 10px 10px;
-            box-shadow: 0 0px 10px  #0050D0;
-        }
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
+    border-bottom: 6px groove #3A4266;
+    height: 79px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0px 0px 10px 10px;
+    box-shadow: 0 0px 10px  #0050D0;
+}
 
-        .header-title {
-            text-align: center;
-        }
+.header-title {
+    text-align: center;
+}
 
-        .header-title .text-box {
-            background-image: linear-gradient(to right, #000, #3A4266, #151825, #000, #3A4266, #151825);
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 10px 100px 10px 100px;
-            border: 2px outset #fff;
-            border-bottom: 1px groove  #fff; 
-            border-top: 1px ridge  #fff; 
-            border-left: 0px ridge #2F2562;
-            border-right: 0px groove #2F2562;
-            color: var(--text-light);
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 13px;
-            color: #fff;
-            box-shadow: 0 0px 10px  rgba(255, 255, 255, 100);
-        }
+.header-title .text-box {
+    background-image: linear-gradient(to right, #000, #3A4266, #151825, #000, #3A4266, #151825);
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 10px 100px 10px 100px;
+    border: 2px outset #fff;
+    border-bottom: 1px groove  #fff; 
+    border-top: 1px ridge  #fff; 
+    border-left: 0px ridge #2F2562;
+    border-right: 0px groove #2F2562;
+    color: var(--text-light);
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    color: #fff;
+    box-shadow: 0 0px 10px  rgba(255, 255, 255, 100);
+}
 
 .header-title .text-box:hover {
     transform: translateY(-2px);
@@ -597,8 +602,12 @@ header {
     font-size: 14px;
 }
 
-/* Responsive Design */
+
+/* Responsive Design - أنماط عامة/أقسام/قنوات */
+
+/* شاشات التابلت والأجهزة الأفقية (~768px) */
 @media (max-width: 768px) {
+    
     .sections-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
@@ -651,16 +660,18 @@ header {
     }
 
     .page-title, .section-title {
-        font-size: 200px;
+        font-size: 1.4rem;
     }
     
     .welcome-message, .section-description {
-        font-size: 9px;
+        font-size: 13px;
         padding: 0 15px;
     }
 }
 
+/* شاشات الهواتف الصغيرة جداً (~480px) */
 @media (max-width: 480px) {
+    
     .sections-grid {
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
         gap: 10px;
@@ -755,7 +766,3 @@ header {
         font-size: 16px;
     }
 }
-
-
-
-

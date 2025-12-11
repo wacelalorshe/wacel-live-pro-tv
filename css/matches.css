@@ -1,257 +1,331 @@
-/* css/matches.css */
+/* matches.css - ملف الأنماط لصفحة المباريات */
+
+/* ========================================================== */
+/* 1. الثوابت والمتغيرات (CSS Variables)                     */
+/* تستخدم لسهولة تغيير الألوان والتنسيقات الأساسية في مكان واحد. */
+/* ========================================================== */
 :root {
-    --primary-bg: linear-gradient(135deg, #0a0c1a 0%, #151a35 50%, #0a0c1a 100%);
-    --card-bg: linear-gradient(145deg, rgba(21, 24, 37, 0.9), rgba(30, 33, 58, 0.9));
-    --header-bg: linear-gradient(90deg, #090b16 0%, #11162b 50%, #090b16 100%);
-    --accent-color: #5d72d6;
+    /* الخلفيات والتدرجات */
+    --primary-bg: linear-gradient(135deg, #0a0c1a 0%, #151a35 50%, #0a0c1a 100%); /* خلفية الصفحة الرئيسية */
+    --card-bg: linear-gradient(145deg, rgba(21, 24, 37, 0.9), rgba(30, 33, 58, 0.9)); /* خلفية بطاقة المباراة */
+    --header-bg: linear-gradient(90deg, #090b16 0%, #11162b 50%, #090b16 100%); /* خلفية شريط الرأس */
+
+    /* الألوان الرئيسية والتركيز */
+    --accent-color: #5d72d6; /* اللون الأزرق المستخدم للوقت والأزرار */
     --accent-hover: #6f83e8;
     --accent-glow: rgba(93, 114, 214, 0.4);
-    --text-color: #ffffff;
-    --text-secondary: #a8b1e1;
-    --border-radius: 20px;
-    --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    --text-color: #ffffff; /* لون النص الأساسي */
+    --text-secondary: #a8b1e1; /* لون النص الثانوي (التفاصيل) */
+
+    /* الأبعاد والزوايا */
+    --border-radius: 20px; /* زوايا مدورة كبيرة */
+    --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); /* ظل كبير للبطاقة */
     --box-shadow-light: 0 8px 25px rgba(0, 0, 0, 0.3);
-    --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* سرعة الانتقالات */
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-    background: var(--primary-bg); 
-    font-family: "Tajawal", sans-serif; 
-    color: var(--text-color); 
-    overflow-x: hidden; 
-    direction: rtl;
+/* ========================================================== */
+/* 2. أنماط الخلفية المتحركة (لإخفائها أو التحكم بها)       */
+/* ========================================================== */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -9;
+    overflow: hidden;
+}
+.bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    filter: blur(60px);
+    animation: float 20s infinite linear;
+}
+.circle-1 { width: 500px; height: 500px; background: var(--accent-color); top: -200px; left: -200px; animation-delay: 0s; }
+.circle-2 { width: 400px; height: 400px; background: #ff6b6b; bottom: -150px; right: -150px; animation-delay: -5s; animation-duration: 25s; }
+.circle-3 { width: 300px; height: 300px; background: #4ecdc4; top: 50%; left: 80%; animation-delay: -10s; animation-duration: 30s; }
+@keyframes float {
+    0% { transform: translate(0,0) rotate(0deg); }
+    33% { transform: translate(30px,-30px) rotate(120deg); }
+    66% { transform: translate(-20px,20px) rotate(240deg); }
+    100% { transform: translate(0,0) rotate(360deg); }
 }
 
-.background-animation { 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    z-index: -9; 
-    overflow: hidden; 
-}
-.bg-circle { 
-    position: absolute; 
-    border-radius: 50%; 
-    opacity: 0.15; 
-    filter: blur(60px); 
-    animation: float 20s infinite linear; 
-}
-.circle-1 { 
-    width: 500px; 
-    height: 500px; 
-    background: var(--accent-color); 
-    top: -200px; 
-    left: -200px; 
-    animation-delay: 0s; 
-}
-.circle-2 { 
-    width: 400px; 
-    height: 400px; 
-    background: #ff6b6b; 
-    bottom: -150px; 
-    right: -150px; 
-    animation-delay: -5s; 
-    animation-duration: 25s; 
-}
-.circle-3 { 
-    width: 300px; 
-    height: 300px; 
-    background: #4ecdc4; 
-    top: 50%; 
-    left: 80%; 
-    animation-delay: -10s; 
-    animation-duration: 30s; 
-}
-@keyframes float { 
-    0% { transform: translate(0,0) rotate(0deg); } 
-    33% { transform: translate(30px,-30px) rotate(120deg); } 
-    66% { transform: translate(-20px,20px) rotate(240deg); } 
-    100% { transform: translate(0,0) rotate(360deg); } 
+/* ========================================================== */
+/* 3. قسم التاريخ في أعلى الصفحة - التوسيط والتنسيق الجمالي */
+/* ========================================================== */
+.date-section {
+    background: rgba(255,255,255,0.05);
+    padding: 12px 20px;
+    border-radius: 15px;
+    border: 1px solid var(--accent-glow);
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+    margin: 20px auto; /* **التعديل: يضمن توسيط العنصر أفقياً** */
+    text-align: center;
+    max-width: 600px; /* يحدد أقصى عرض لتمكين التوسيط بواسطة 'auto' */
+    backdrop-filter: blur(5px); /* تأثير زجاجي خفيف للخلفية */
 }
 
-.main-header { 
-    width: 100%; 
-    padding: 15px 0; 
-    background: var(--header-bg); 
-    border-bottom: 2px solid rgba(255,255,255,0.1); 
-    backdrop-filter: blur(15px); 
-    position: sticky; 
-    top: 0; 
-    z-index: 999; 
+.hijri-date {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
 }
-.header-content {
-    max-width: 1600px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-    gap: 20px;
-}
-
-.logo-section { flex-shrink: 0; }
-.app-logo { width: 40px; height: 40px; border-radius: 12px; }
-
-.app-name { display: flex; flex-direction: column; justify-content: center; text-align: left; }
-.app-title {
+.gregorian-date {
     font-size: 18px;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--accent-color), #ffd700);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.app-subtitle { font-size: 10px; color: var(--text-secondary); }
-
-.date-section { 
-    background: rgba(255,255,255,0.05); 
-    padding: 8px 12px; 
-    border-radius: 15px; 
-    border: 1px solid var(--accent-glow); 
-    box-shadow: 0 0 15px rgba(255,255,255,0.1); 
-}
-.hijri-date { font-size: 13px; color: var(--text-secondary); }
-.gregorian-date { font-size: 15px; font-weight: bold; }
-
-#matches-container { 
-    padding: 20px; 
-    max-width: 1200px; 
-    margin: 20px auto; 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); 
-    gap: 20px; 
+    font-weight: bold;
+    color: var(--text-color);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* ظل نصي خفيف */
 }
 
+/* ========================================================== */
+/* 4. حاوية عرض المباريات (Grid Layout)                      */
+/* ========================================================== */
+.matches-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+    gap: 25px;
+    padding: 20px 0;
+}
+
+/* ========================================================== */
+/* 5. بطاقة المباراة الواحدة (Match Card)                    */
+/* ========================================================== */
 .match-box {
     background: var(--card-bg);
     border-radius: var(--border-radius);
-    padding: 15px;
+    padding: 20px;
     box-shadow: var(--box-shadow);
-    transition: transform 0.5s, box-shadow 0.5s;
-    transform-style: preserve-3d;
-    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 }
 .match-box:hover {
-    transform: rotateY(10deg) rotateX(5deg) translateY(-10px) scale(1.05);
-    box-shadow: 0 30px 50px rgba(0,0,0,0.7);
+    transform: translateY(-10px) scale(1.03); 
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+    border-color: var(--accent-glow);
 }
-.match-info { display: flex; justify-content: space-between; align-items: center; }
-.match-info img { width: 50px; height: 50px; border-radius: 12px; }
-.match-details { 
-    display: flex; 
-    justify-content: space-around; 
-    padding: 10px 0 5px; 
-    margin-top: 10px; 
-    border-top: 1px solid rgba(255,255,255,0.1); 
-    font-size:14px; 
-    color:var(--text-secondary); 
+
+/* ========================================================== */
+/* 6. معلومات الفريقين والوقت (Match Info) - العرض الأفقي ثابت */
+/* ========================================================== */
+.match-info {
+    display: flex; /* **مهم: يحافظ على الفرق جنباً إلى جنب (أفقياً)** */
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-.match-actions { 
-    display: flex; 
-    gap: 10px; 
-    justify-content: center; 
-    margin-top: 10px; 
-    padding-top: 10px; 
-    border-top: 1px solid rgba(255,255,255,0.1); 
+
+.team {
+    display: flex;
+    flex-direction: column; /* **مهم: يجعل الشعار فوق الاسم** */
+    align-items: center;
+    text-align: center;
+    flex: 1;
+}
+
+.team-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.team-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.match-time {
+    background: linear-gradient(135deg, var(--accent-color), #ffd700);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 15px;
+    box-shadow: 0 5px 15px rgba(93, 114, 214, 0.4);
+}
+
+/* ========================================================== */
+/* 7. تفاصيل المباراة (القناة والمعلق) - العرض الأفقي ثابت والتنسيق الجمالي */
+/* ========================================================== */
+.match-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* **مهم: عمودين متساويين لجميع الشاشات (أفقي)** */
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-item {
+    /* التنسيق الجمالي والتوسيط */
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center; /* **التعديل: توسيط النص داخل البطاقة** */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
+}
+
+.detail-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+}
+
+.detail-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-shadow: 0 0 5px var(--accent-glow);
+}
+
+/* ========================================================== */
+/* 8. أزرار المشاهدة والتحميل (Actions)                      */
+/* ========================================================== */
+.match-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
     flex-wrap: wrap; 
 }
-
-.btn { 
-    padding: 8px 15px; 
-    border-radius: 15px; 
-    cursor: pointer; 
-    margin: 5px; 
-    border: none; 
-    font-size: 14px; 
-}
-.btn-success { background:#28a745; color:white; font-weight:bold; }
-.btn-info { background:#17a2b8; color:white; }
-.btn-warning { background:#ffc107; color:#000; font-weight:bold; }
-.btn-secondary { background:#555; color:white; }
-
-.download-section { 
-    background: var(--card-bg); 
-    border-radius: 22px; 
-    margin: 30px auto; 
-    max-width: 600px; 
-    padding: 20px; 
-    box-shadow: var(--box-shadow); 
-    text-align:center; 
+.match-button {
+    padding: 10px 20px;
+    border-radius: 15px;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1; 
+    min-width: 140px; 
 }
 
-.loading { text-align:center; padding:40px; color:var(--text-secondary); font-size:18px; }
-.error { 
-    background: linear-gradient(135deg, #e74c3c, #c0392b); 
-    color:white; 
-    padding:20px; 
-    border-radius:15px; 
-    margin:20px 0; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-    font-weight:500; 
+.match-button.watch { background: linear-gradient(135deg, #28a745, #218838); color: white; }
+.match-button.download { background: linear-gradient(135deg, #17a2b8, #138496); color: white; }
+.match-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
-.success { 
-    background: linear-gradient(135deg, #2ecc71, #27ae60); 
-    color:white; 
-    padding:20px; 
-    border-radius:15px; 
-    margin:20px 0; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
-}
+
+/* ========================================================== */
+/* 9. رسائل الحالة (تحميل/خطأ/نجاح)                         */
+/* ========================================================== */
+.loading { text-align: center; padding: 40px; color: var(--text-secondary); font-size: 18px; }
+.error { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.3); font-weight: 500; }
+.success { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; padding: 20px; border-radius: 15px; margin: 20px 0; box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
 
 .fade-in { animation: fadeInUp 0.6s ease-out; }
-@keyframes fadeInUp { 
-    from { opacity:0; transform:translateY(30px); } 
-    to { opacity:1; transform:translateY(0); } 
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
+/* ========================================================== */
+/* 10. التجاوبية (Responsive Design) - الأجهزة اللوحية (768px)  */
+/* ========================================================== */
 @media (max-width: 768px) {
-    #matches-container {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        padding: 15px;
-        gap: 15px;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        gap: 10px;
-        padding: 0 15px;
-    }
-    
-    .app-title {
-        font-size: 16px;
-    }
-    
-    .app-subtitle {
-        font-size: 9px;
-    }
-}
-
-@media (max-width: 480px) {
-    #matches-container {
-        grid-template-columns: 1fr;
-        padding: 10px;
+    .matches-container {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
     }
     
     .match-box {
-        padding: 12px;
+        padding: 15px;
     }
     
-    .app-logo {
-        width: 35px;
-        height: 35px;
+    .team-logo {
+        width: 50px;
+        height: 50px;
     }
     
-    .app-title {
-        font-size: 14px;
+    .match-time {
+        font-size: 16px;
+        padding: 8px 16px;
     }
-    
-    .hijri-date {
-        font-size: 11px;
+
+    /* **مهم**: جعل الأزرار عمودية عند هذا الحجم لتظهر بشكل أفضل في معظم الهواتف */
+    .match-actions {
+        flex-direction: column; 
     }
-    
-    .gregorian-date {
+    .match-button {
+        width: 100%;
+        min-width: unset;
+        padding: 8px 15px;
         font-size: 13px;
+    }
+}
+
+/* ========================================================== */
+/* 11. التجاوبية (Responsive Design) - الهواتف الصغيرة جداً (480px) */
+/* ========================================================== */
+@media (max-width: 480px) {
+    .matches-container {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    /* يتم هنا فقط تقليل الأحجام للحفاظ على الترتيب الأفقي الثابت في الشاشة الأصغر */
+    .team-logo {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 5px;
+    }
+    
+    .team-name {
+        font-size: 14px; 
+    }
+
+    .match-time {
+        margin: 0 5px;
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+    
+    /* ملاحظة: نمط .match-info و .match-details يحافظ على العرض الأفقي لعدم وجود تغيير هنا. */
+}
+
+/* ========================================================== */
+/* 12. أنماط الإشعارات والتحسينات المشتركة                    */
+/* ========================================================== */
+.custom-alert {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 10000;
+    max-width: 400px;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .custom-alert {
+        right: 10px;
+        left: 10px;
+        max-width: none;
     }
 }

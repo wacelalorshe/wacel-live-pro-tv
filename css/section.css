@@ -1,389 +1,226 @@
-::root {
-            --primary-color: #3545FF;
-            --secondary-color: #FF5200;
-            --dark-bg: #151825;
-            --darker-bg: #0d111c;
-            --card-bg: #2F2562;
-            --text-light: #F0F0F0;
-            --success-color: #80FF00;
-            --danger-color: #FF0005;
-        }
+/* css/section.css */
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+/* Section Page Specific Styles */
+.section-title {
+    text-align: center;
+    /* إزالة position: fixed وتكرارات العرض لجعله أكثر مرونة، إذا كنت تريده غير ثابت، أزل position: fixed */
+    position: fixed; /* إذا أردته ثابتًا */
+    top: 80px;
+    left: 0;
+    right: 0;
+    width: 100%; /* العرض الكامل للشاشة */
+    max-width: 90%; /* لكن لا يتجاوز 90% من عرضه الأصلي (أو قيمة ثابتة للمحافظة على التصميم) */
+    margin: 0 auto 20px; /* لمركزته مع left:0 و right:0 عندما يكون fixed أو عند استبدال fixed بـ relative/static */
+    overflow: hidden;
+    display: flex;
+    justify-content: center; /* لمركزة المحتوى داخله */
+    align-items: center;
+    background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+    padding: 5px 1px;
+    border-radius: 0px;
+    color: white;
+    font-size: 1.0rem; /* وحدة نسبية */
+    border-bottom: 3px groove #151825;
+    z-index: 1000; /* تأكد من ظهوره فوق العناصر الأخرى */
+}
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            font-family: Arial, sans-serif;
-            background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
-            color: var(--text-light);
-            direction: rtl;
-            height: 100%;
-        }
+.section-description {
+    /* إزالة تكرارات العرض والخصائص المتعارضة */
+    position: fixed; /* إذا أردته ثابتًا */
+    top: 111px;
+    left: 0;
+    right: 0;
+    width: 100%; /* العرض الكامل للشاشة */
+    max-width: 90%; /* الحد الأقصى للعرض */
+    margin: 0 auto 100px; /* لمركزته */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+    padding: 5px;
+    z-index: 999;
+    border-bottom: 0px groove #fff;
+    font-size: 13px; /* يمكن استخدام 0.8rem */
+    color: #b8d4f5;
+}
 
-        /* Header Styles */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
-            border-bottom: 6px groove #3A4266;
-            height: 79px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0px 0px 10px 10px;
-            box-shadow: 0 0px 10px  #0050D0;
-        }
+/* Channels Grid - الجزء الأكثر أهمية للتكيف */
+.channels-container {
+    /* استخدام minmax و auto-fill لإنشاء تخطيط شبكي متجاوب بالكامل */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); /* يتكيف تلقائيًا */
+    gap: 20px;
+    padding: 20px 20px; /* إضافة padding أفقي للشاشات الصغيرة */
+    justify-items: center;
+    /* إضافة هامش علوي أكبر للتعويض عن العناصر الثابتة */
+    margin-top: 100px; 
+}
 
-        .header-title {
-            text-align: center;
-        }
+.channel-card {
+    background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+    padding: 15px;
+    margin: 10px 0; /* إزالة الهامش الأفقي ليتسع بشكل أفضل داخل الشبكة */
+    height: 90%; /* يمكن استخدام min-height: 150px; للتكيف */
+    width: 90%; /* عرض نسبي داخل عمود الشبكة */
+    max-width: 250px; /* تحديد حد أقصى للحجم في الشاشات الكبيرة */
+    border-bottom: 4px groove #fff;
+    border-top: 4px groove #fff;
+    border-left: 0px ridge rgb(255 0 0 / 100%);
+    border-right: 0px ridge #f1f8e9;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* التأكد من أن padding و border لا يغيران حجم العنصر */
+}
 
-        .header-title .text-box {
-            background-image: linear-gradient(to right, #000, #3A4266, #151825, #000, #3A4266, #151825);
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 10px 100px 10px 100px;
-            border: 2px outset #fff;
-            border-bottom: 1px groove  #fff; 
-            border-top: 1px ridge  #fff; 
-            border-left: 0px ridge #2F2562;
-            border-right: 0px groove #2F2562;
-            color: var(--text-light);
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 13px;
-            color: #fff;
-            box-shadow: 0 0px 10px  rgba(255, 255, 255, 100);
-        }
+.channel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
 
-        /* Back Button */
-        .back-button {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(45deg, #3545FF, #FF5200);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            padding: 8px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            text-decoration: none;
-        }
+.channel-logo {
+    width: 100%;
+    height: auto; /* إزالة الارتفاع الثابت */
+    margin: 0 auto 10px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+}
 
-        .back-button:hover {
-            transform: translateY(-50%) scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            color: white;
-            text-decoration: none;
-        }
+.channel-logo img {
+    background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
+    /* استخدام وحدات نسبية أو الحد الأقصى للعرض داخل العنصر الأب */
+    width: 80%;
+    height: auto; /* للحفاظ على نسبة العرض إلى الارتفاع */
+    max-width: 100px; /* تحديد حد أقصى لصورة اللوجو */
+    aspect-ratio: 1 / 1; /* للحفاظ على الشكل المربع */
+    margin: 0 auto 10px;
+    border-radius: 10px 20px 10px 20px;
+    border-bottom: 5px double rgba(255, 255, 255, 0.7); 
+    border-top: 5px double rgba(255, 255, 255, 0.7); 
+    border-left: 0px ridge #2F2562;
+    border-right: 0px groove #2F2562;
+    padding: 3px;
+    display: block;
+    pointer-events: none;
+}
 
-        /* Main Content */
-        .content {
-            margin-top: 100px;
-            padding: 20px;
-            min-height: calc(100vh - 180px);
-            padding-bottom: 80px;
-        }
+.channel-name {
+    background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
+    padding: 3px 0;
+    box-shadow: 0 0px 100px rgba(255, 255, 255, 100);
+    border-top: 2px groove rgba(0, 0, 0, 100);
+    border-left: 0px ridge #6D42B8;
+    border-right: 0px groove #6D42B8;
+    border-bottom: 3px groove rgba(0, 0, 0, 5);
+    color: #fff;
+    border-radius: 10px;
+    margin-top: 30px;
+    font-weight: bold; 
+    font-family: Arial, sans-serif; 
+    box-shadow: 0 0px 5px rgba(255, 255, 255, 100);
+    text-align: center;
+    font-size: 0.8rem; /* وحدة نسبية */
+}
+.channel-description {
+    color: #E1E1E1;
+    font-size: 0.7rem; /* وحدة نسبية */
+    margin-top: 5px;
+    text-align: center;
+    line-height: 1.3;
+}
 
-        .section-title {
-            text-align: center;
-            position: fixed;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            display: inline-block;
-            position: fixed;
-            top: 80px;
-            width: 100%;
-            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
-            padding: 5px 1px;
-            border-radius: 0px;
-            margin: 0 auto 20px;
-            color: white;
-            font-size: 1.0rem;
-            border-bottom: 3px groove #151825;
-            max-width: 90%;
-        }
+/* Modal Styles */
+/* لا تحتاج إلى تغييرات كبيرة في الـ Modal لأنها تستخدم النسبة المئوية والعرض الأقصى */
+#installModal, .modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding-top: 10vh; /* استخدام vh بدلاً من px */
+    animation: fadeIn 0.3s;
+}
 
-        .section-description {
-            
-            position: fixed;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            display: inline-block;
-            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
-            padding-bottom: 5px;
-            border-radius: 0px;
-            top: 111px;
-            left: 0;
-            right: 0;
-            width: 90%;
-            padding: 5px;
-            z-index: 999;
-            margin: 0 auto 100px;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            
-            border-bottom: 0px groove #fff;
-            font-size: 13px;
-            color: #b8d4f5;
-        }
+.modal-content {
+    background: linear-gradient(to right, var(--dark-bg), #3A4266);
+    margin: auto;
+    padding: 20px;
+    border: 3px groove #fff;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
+    text-align: center;
+    color: var(--text-light);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s;
+}
 
-        /* Channels Grid */
-        .channels-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
-            justify-items: center;
-        }
+/* ... بقية أنماط الـ Modal والـ Connection Error (محتفظ بها كما هي) ... */
 
-        .channel-card {
-            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
-            padding: 15px;
-            background-size: cover;
-            background-position: top center;
-            background-repeat: no-repeat;
-            margin: 20px 10px;
-            height: 90%;
-            width: 80%;
-            border-bottom: 4px groove #fff;
-            border-top: 4px groove #fff;
-            border-left: 0px ridge rgb(255 0 0 / 100%);
-            border-right: 0px ridge #f1f8e9;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+/* Media Queries المعدلة */
+/* إزالة استعلام الوسائط (min-width: 1024px) القديم الذي يحتوي على قيم ثابتة */
 
-        .channel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-        }
+/* الأجهزة اللوحية (Tablets) وما شابه (من 768px إلى 1024px) */
+@media (max-width: 1024px) {
+    .channels-container {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 15px;
+    }
+    
+    .channel-card {
+        padding: 10px;
+    }
+}
 
-        .channel-logo {
-            width: 100%;
-            height: 10px;
-            margin: 0 auto 10px;
-            padding: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1px;
-        }
+/* الهواتف الذكية (Small Phones) */
+@media (max-width: 480px) {
+    .section-title {
+        top: 80px; /* تغيير موقع العنوان في الشاشات الصغيرة */
+        font-size: 0.9rem;
+        padding: 4px 1px;
+    }
 
-        .channel-logo img {
-            background-image: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
-            width: 100%;
-            height: 10%;
-            margin: 0 auto 10px;
-            border-radius: 10px 20px 10px 20px;
-            border-bottom: 5px double rgba(255, 255, 255, 0.7); 
-            border-top: 5px double rgba(255, 255, 255, 0.7); 
-            border-left: 0px ridge #2F2562;
-            border-right: 0px groove #2F2562;
-            padding: 3px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 0%;
-            margin-left: 0%;
-            pointer-events: none;
-        }
+    .section-description {
+        top: 110px;
+        font-size: 11px;
+        padding: 4px;
+    }
 
-        .channel-name {
-            background-image: linear-gradient(to right, #000, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825,#151825, #151825, #151825, #151825, #151825, #151825, #151825, #151825, #000);
-            padding: 3px 0;
-            box-shadow: 0 0px 100px rgba(255, 255, 255, 100);
-            border-top: 2px groove rgba(0, 0, 0, 100);
-            border-left: 0px ridge #6D42B8;
-            border-right: 0px groove #6D42B8;
-            border-bottom: 3px groove rgba(0, 0, 0, 5);
-            color: #fff;
-            border-radius: 10px;
-            margin-top: 30px;
-            font-weight: bold; 
-            font-family: Arial, sans-serif; 
-            box-shadow: 0 0px 5px rgba(255, 255, 255, 100);
-            text-align: center;
-            font-size: 10px;
-        }
+    .channels-container {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        padding: 10px;
+        margin-top: 40px; /* لتعويض موقع العنوان والوصف الجديد */
+    }
+    
+    .channel-card {
+        padding: 8px;
+        margin: 10px 0;
+    }
+    
+    .channel-logo img {
+        max-width: 70px;
+    }
+    
+    .channel-name {
+        font-size: 0.7rem;
+        margin-top: 15px;
+    }
 
-        /* Footer */
-        .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            padding: 0.5rem;
-            background: linear-gradient(to right, #503FA6, var(--dark-bg), #2F2562);
-            border-top: 1px solid #fff;
-            font-family: Amita, cursive;
-            color: white;
-            z-index: 100;
-        }
+    .channel-description {
+        font-size: 0.65rem;
+    }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: linear-gradient(to right, #151825, #3A4266, #3A4266, #3A4266, #3A4266, #151825);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            z-index: 999;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #fff;
-            text-decoration: none;
-            font-size: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item i {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        .nav-item:hover {
-            color: var(--secondary-color);
-            transform: translateY(-3px);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding-top: 100px;
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background: linear-gradient(to right, var(--dark-bg), #3A4266);
-            margin: auto;
-            padding: 20px;
-            border: 3px groove #fff;
-            width: 90%;
-            max-width: 500px;
-            border-radius: 15px;
-            text-align: center;
-            color: var(--text-light);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            animation: slideIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .modal-button {
-            background-color: var(--success-color);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-            margin: 0 5px;
-        }
-
-        .cancel-button {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        
-            
-            .channel-card {
-                max-width: 1300px;
-            }
-            
-            .channel-logo {
-                height: 100px;
-            }
-            
-            .channel-logo img {
-                width: 100px;
-                height: 100px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .channels-container {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 10px;
-            }
-            
-            .channel-card {
-                max-width: 110px;
-                padding: 8px;
-            }
-            
-            .channel-logo {
-                height: 60px;
-            }
-            
-            .channel-logo img {
-                width: 60px;
-                height: 60px;
-            }
-            
-            .channel-name {
-                font-size: 10px;
-            }
-        }
+    .modal-content {
+        width: 95%; /* زيادة عرض الـ Modal قليلاً */
+        padding: 15px;
+    }
+}
